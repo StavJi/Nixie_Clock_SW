@@ -9,9 +9,6 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="Nixie_SW.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="250" Width="500">
-    <Window.Resources>
-        <ObjectDataProvider ObjectType="{x:Type ports:SerialPort}" MethodName="GetPortNames" x:Key="portNames"/>
-    </Window.Resources>
     <Grid>
         <materialDesign:Card VerticalAlignment="Top" Margin="20" HorizontalAlignment="Center" materialDesign:ShadowAssist.ShadowDepth="Depth5">
             <StackPanel Orientation="Horizontal" Margin="16">
@@ -19,8 +16,8 @@
                 <TextBlock x:Name="TxtClock" Margin="16 0 16 0" TextWrapping="NoWrap" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16">Time</TextBlock>
             </StackPanel>
         </materialDesign:Card>
-        <ComboBox x:Name="COM" ItemsSource="{Binding Source={StaticResource portNames}}" SelectionChanged="ComboBox_SelectionChanged" HorizontalAlignment="Left" Margin="30,162,0,0" Width="120" VerticalAlignment="Top"/>
-        <Button x:Name="Connect" Content="Connect" HorizontalAlignment="Left" Margin="228,154,0,0" VerticalAlignment="Top" Click="Connect_Click"/>
-        <Button x:Name="SendTime" Content="Send Time" HorizontalAlignment="Left" Margin="350,154,0,0" VerticalAlignment="Top" Click="SendTime_Click" IsEnabled="False"/>
+        <ComboBox x:Name="COM" HorizontalAlignment="Left" Margin="30,154,0,0" Width="120" VerticalAlignment="Top"/>
+        <Button x:Name="Connect" Content="Connect" HorizontalAlignment="Right" Margin="0,154,170,0" VerticalAlignment="Top" Click="Connect_Click"/>
+        <Button x:Name="SendTime" Content="Send Time" HorizontalAlignment="Right" Margin="0,154,30,0" VerticalAlignment="Top" Click="SendTime_Click" IsEnabled="False"/>
     </Grid>
 </Window>

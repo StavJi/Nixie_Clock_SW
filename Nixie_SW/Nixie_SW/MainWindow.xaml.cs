@@ -23,58 +23,106 @@ namespace Nixie_SW
     public partial class MainWindow : Window
     {
         System.Windows.Threading.DispatcherTimer timer = new DispatcherTimer();
-        SerialPort sp = new SerialPort();
+        SerialPort serialPort = new SerialPort();
+        string[] serialPorts;
+        bool serialPortOpen = false;
+        DateTime dt;
 
         public MainWindow()
         {
             InitializeComponent();
             timer.Tick += new EventHandler(Timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 1);
+            Time_Update();
+            InitializeSerialPorts();
             timer.Start();
+        }
+
+        private void Time_Update()
+        {
+            dt = DateTime.Now;
+            TxtClock.Text = dt.ToLongTimeString() + "   " + "   " + dt.ToLongDateString();
+
+            InitializeSerialPorts();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            DateTime dt;
-            dt = DateTime.Now;
-            TxtClock.Text = dt.ToLongTimeString() + "   " + "   " + dt.ToLongDateString();
+            Time_Update();
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void InitializeSerialPorts()
         {
-            var selectedComboItem = sender as ComboBox;
-            string name = selectedComboItem.SelectedItem as string;
+            serialPorts = SerialPort.GetPortNames();
+            COM.Items.Clear();
+
+            if(serialPorts.Count() != 0)
+            {
+                foreach (string serial in serialPorts)
+                {
+                    COM.Items.Add(serial);
+                    /*var serialItems = COM.Items;
+                    if (!serialItems.Contains(serial)) // not yet in combobox
+                    {
+                        COM.Items.Add(serial);
+                    }*/
+                }
+
+                COM.SelectedItem = serialPorts[0];  // default serial port
+            }
         }
 
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
-            if (!sp.IsOpen)
+            if ( (COM.SelectedItem != null) && (!serialPortOpen))
             {
                 try
                 {
-                    string portName = COM.SelectedItem as string;
-                    sp.PortName = portName;
-                    sp.BaudRate = 115200;
-                    sp.Open();
+                    string selectedPortName = COM.SelectedItem.ToString();
+                    serialPort.PortName = selectedPortName;
+                    serialPort.BaudRate = 115200;
+                    serialPort.Open();
                     Connect.Content = "Disconnect";
                     SendTime.IsEnabled = true;
+                    COM.IsEnabled = false;
+                    serialPortOpen = true;
                 }
-                catch (Exception)
+                catch (UnauthorizedAccessException)
                 {
-                    MessageBox.Show("Please give a valid port number or check your connection!");
+                    MessageBox.Show("The selected serial port is busy!");
                 }
-            } 
+                catch (NullReferenceException)
+                {
+                    MessageBox.Show("There is no serial port!");
+                }
+                catch (Exception errorMSG)
+                {
+                    MessageBox.Show(errorMSG.ToString());
+                }
+            }
             else
             {
-                sp.Close();
+                if ((COM.SelectedItem == null) && COM.IsEnabled)
+                {
+                    MessageBox.Show("No COM port available!");
+                }
+
                 Connect.Content = "Connect";
                 SendTime.IsEnabled = false;
+                COM.IsEnabled = true;
+                serialPortOpen = false;
+                serialPort.Close();
+
             }
         }
 
         private void SendTime_Click(object sender, RoutedEventArgs e)
         {
-            sp.Write("Hello World\n");
+
+            string cmd = "AT&DATE_TIME:" + dt.Month.ToString() + "-" + dt.Year + " " + dt.Hour.ToString() + ":" + dt.Minute.ToString() + ":" + dt.Second.ToString();
+
+            serialPort.Write(cmd);
+
             // TODO send AT cmd1
             // TODO wait for response OK or ERROR
             // TODO if response OK
