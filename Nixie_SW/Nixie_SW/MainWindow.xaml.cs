@@ -27,6 +27,7 @@ namespace Nixie_SW
         string[] serialPorts;
         bool serialPortOpen = false;
         DateTime dt;
+        string readData;
 
         public MainWindow()
         {
@@ -35,6 +36,7 @@ namespace Nixie_SW
             timer.Interval = new TimeSpan(0, 0, 1);
             Time_Update();
             InitializeSerialPorts();
+            serialPort.DataReceived += new SerialDataReceivedEventHandler(OnDataReceived);
             timer.Start();
         }
 
@@ -84,6 +86,8 @@ namespace Nixie_SW
                     serialPort.Open();
                     Connect.Content = "Disconnect";
                     SendTime.IsEnabled = true;
+                    SendNightModeEnable.IsEnabled = true;
+                    SendNightModeDisable.IsEnabled = true;
                     COM.IsEnabled = false;
                     serialPortOpen = true;
                 }
@@ -109,6 +113,8 @@ namespace Nixie_SW
 
                 Connect.Content = "Connect";
                 SendTime.IsEnabled = false;
+                SendNightModeEnable.IsEnabled = false;
+                SendNightModeDisable.IsEnabled = false;
                 COM.IsEnabled = true;
                 serialPortOpen = false;
                 serialPort.Close();
@@ -116,17 +122,46 @@ namespace Nixie_SW
             }
         }
 
+        private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            try
+            {
+                readData = serialPort.ReadExisting();
+            }
+            catch (Exception errorMSG) {
+                MessageBox.Show(errorMSG.ToString());
+            }
+        }
+
         private void SendTime_Click(object sender, RoutedEventArgs e)
         {
 
-            string cmd = "AT&DATE_TIME:" + dt.Month.ToString() + "-" + dt.Year + " " + dt.Hour.ToString() + ":" + dt.Minute.ToString() + ":" + dt.Second.ToString();
-
+            string cmd = "AT$DATE_TIME:" + dt.Day.ToString("00") + "-" + dt.Month.ToString("00") + "-" + dt.Year.ToString("0000") + " " + dt.Hour.ToString("00") + ":" + dt.Minute.ToString("00") + ":" + dt.Second.ToString("00") + "\n";
             serialPort.Write(cmd);
-
-            // TODO send AT cmd1
             // TODO wait for response OK or ERROR
-            // TODO if response OK
-            // TODO send AT cmd2
+            // TODO if response OK then continue with cmd1
+            // TODO if response error then throw msg
+
+            string cmd1 = "AT$DAY:" + (int)(dt.DayOfWeek + 7) % 7 + "\n";
+            serialPort.Write(cmd1);
+            // TODO wait for response OK or ERROR
+            // TODO if error then thow msg
+
+
+
+        }
+
+        private void SendNightModeEnable_Click(object sender, RoutedEventArgs e)
+        {
+            string cmd = "AT$NIGHT_MODE=1\n";
+            serialPort.Write(cmd);
+            // TODO wait for response OK or ERROR
+            // TODO if error then thow msg
+        }
+        private void SendNightModeDisable_Click(object sender, RoutedEventArgs e)
+        {
+            string cmd = "AT$NIGHT_MODE=0\n";
+            serialPort.Write(cmd);
             // TODO wait for response OK or ERROR
             // TODO if error then thow msg
         }
