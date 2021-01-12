@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.IO.Ports;
 
@@ -20,38 +9,57 @@ namespace Nixie_SW
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
-        System.Windows.Threading.DispatcherTimer timer = new DispatcherTimer();
-        SerialPort serialPort = new SerialPort();
+        readonly DispatcherTimer timer1s = new DispatcherTimer();
+        readonly DispatcherTimer timer5s = new DispatcherTimer();
+        readonly SerialPort serialPort = new SerialPort();
         string[] serialPorts;
-        bool serialPortOpen = false;
         DateTime dt;
         string readData;
+        Operation operation;
+        int timeout;
 
         public MainWindow()
         {
             InitializeComponent();
-            timer.Tick += new EventHandler(Timer_Tick);
-            timer.Interval = new TimeSpan(0, 0, 1);
-            Time_Update();
+            timer1s.Tick += new EventHandler(Timer1s_Tick);
+            timer1s.Interval = new TimeSpan(0, 0, 1);
+
+            TimeUpdate();
             InitializeSerialPorts();
             serialPort.DataReceived += new SerialDataReceivedEventHandler(OnDataReceived);
-            timer.Start();
+            timer1s.Start();
         }
 
-        private void Time_Update()
+        private void Timer1s_Tick(object sender, EventArgs e)
+        {
+            timer1s.Stop();
+
+            TimeUpdate();
+            InitializeSerialPorts();
+
+            if (operation != Operation.NotSet)
+            {
+                timeout++;
+            }
+            
+            if((timeout >= 2))
+            {
+                MessageBox.Show("Command timeout!");
+                operation = Operation.NotSet;
+                timeout = 0;
+            }
+
+            timer1s.Start();
+        }
+
+        private void TimeUpdate()
         {
             dt = DateTime.Now;
             TxtClock.Text = dt.ToLongTimeString() + "   " + "   " + dt.ToLongDateString();
-
-            InitializeSerialPorts();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            Time_Update();
-        }
 
         private void InitializeSerialPorts()
         {
@@ -63,11 +71,6 @@ namespace Nixie_SW
                 foreach (string serial in serialPorts)
                 {
                     COM.Items.Add(serial);
-                    /*var serialItems = COM.Items;
-                    if (!serialItems.Contains(serial)) // not yet in combobox
-                    {
-                        COM.Items.Add(serial);
-                    }*/
                 }
 
                 COM.SelectedItem = serialPorts[0];  // default serial port
@@ -76,7 +79,7 @@ namespace Nixie_SW
 
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
-            if ( (COM.SelectedItem != null) && (!serialPortOpen))
+            if ( (COM.SelectedItem != null) && (!serialPort.IsOpen))
             {
                 try
                 {
@@ -89,7 +92,6 @@ namespace Nixie_SW
                     SendNightModeEnable.IsEnabled = true;
                     SendNightModeDisable.IsEnabled = true;
                     COM.IsEnabled = false;
-                    serialPortOpen = true;
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -101,7 +103,7 @@ namespace Nixie_SW
                 }
                 catch (Exception errorMSG)
                 {
-                    MessageBox.Show(errorMSG.ToString());
+                    MessageBox.Show(errorMSG.Message);
                 }
             }
             else
@@ -116,7 +118,6 @@ namespace Nixie_SW
                 SendNightModeEnable.IsEnabled = false;
                 SendNightModeDisable.IsEnabled = false;
                 COM.IsEnabled = true;
-                serialPortOpen = false;
                 serialPort.Close();
 
             }
@@ -126,44 +127,102 @@ namespace Nixie_SW
         {
             try
             {
+                bool status = false;
                 readData = serialPort.ReadExisting();
+
+                if (readData.Contains("OK"))
+                    status = true;
+                else if (readData.Contains("ERROR"))
+                {
+                    MessageBox.Show("Device responded with error for command!");
+                }
+                else
+                {
+                    MessageBox.Show("Unexpected response for command!");
+                }
+                    
+                switch (operation)
+                {
+                    case Operation.SendDateTime:
+                        if(status)
+                        {
+                            operation = Operation.SendDay;
+                            string cmd1 = "AT$DAY:" + (int)(dt.DayOfWeek + 7) % 7 + "\n";
+                            serialPort.Write(cmd1);
+                        } 
+                        else
+                        {
+                            operation = Operation.NotSet;
+                        }
+                        
+                        break;
+
+                    case Operation.SendDay:
+                        operation = Operation.NotSet;
+                        break;
+
+                    case Operation.EnableNightMode:
+                        operation = Operation.NotSet;
+                        break;
+
+                    case Operation.DisableNightMode:
+                        operation = Operation.NotSet;
+                        break;
+                }
             }
             catch (Exception errorMSG) {
-                MessageBox.Show(errorMSG.ToString());
+                MessageBox.Show(errorMSG.Message);
             }
         }
 
         private void SendTime_Click(object sender, RoutedEventArgs e)
         {
+            if (serialPort == null || !serialPort.IsOpen)
+            {
+                return;
+            }
 
             string cmd = "AT$DATE_TIME:" + dt.Day.ToString("00") + "-" + dt.Month.ToString("00") + "-" + dt.Year.ToString("0000") + " " + dt.Hour.ToString("00") + ":" + dt.Minute.ToString("00") + ":" + dt.Second.ToString("00") + "\n";
+            operation = Operation.SendDateTime;
             serialPort.Write(cmd);
-            // TODO wait for response OK or ERROR
-            // TODO if response OK then continue with cmd1
-            // TODO if response error then throw msg
-
-            string cmd1 = "AT$DAY:" + (int)(dt.DayOfWeek + 7) % 7 + "\n";
-            serialPort.Write(cmd1);
-            // TODO wait for response OK or ERROR
-            // TODO if error then thow msg
-
-
-
         }
 
         private void SendNightModeEnable_Click(object sender, RoutedEventArgs e)
         {
+            if (serialPort == null || !serialPort.IsOpen)
+            {
+                return;
+            }
+
             string cmd = "AT$NIGHT_MODE=1\n";
+            operation = Operation.EnableNightMode;
             serialPort.Write(cmd);
-            // TODO wait for response OK or ERROR
-            // TODO if error then thow msg
         }
+
         private void SendNightModeDisable_Click(object sender, RoutedEventArgs e)
         {
+            if (serialPort == null || !serialPort.IsOpen)
+            {
+                return;
+            }
+
             string cmd = "AT$NIGHT_MODE=0\n";
+            operation = Operation.DisableNightMode;
             serialPort.Write(cmd);
-            // TODO wait for response OK or ERROR
-            // TODO if error then thow msg
         }
+
+        public void Dispose()
+        {
+            serialPort?.Dispose();
+        }
+    }
+
+    public enum Operation
+    { 
+        NotSet,
+        SendDateTime,   // cmd
+        SendDay,        // cmd1
+        EnableNightMode,
+        DisableNightMode
     }
 }
