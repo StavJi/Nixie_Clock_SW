@@ -19,6 +19,7 @@ namespace Nixie_SW
         string readData;
         Operation operation;
         int timeout;
+        const int TIMEOUT_SEC = 2;
 
         public MainWindow()
         {
@@ -44,7 +45,7 @@ namespace Nixie_SW
                 timeout++;
             }
             
-            if((timeout >= 2))
+            if(timeout >= TIMEOUT_SEC)
             {
                 MessageBox.Show("Command timeout!");
                 operation = Operation.NotSet;
@@ -118,6 +119,7 @@ namespace Nixie_SW
                 SendNightModeEnable.IsEnabled = false;
                 SendNightModeDisable.IsEnabled = false;
                 COM.IsEnabled = true;
+                LogOutput.Clear();
                 serialPort.Close();
 
             }
@@ -129,6 +131,7 @@ namespace Nixie_SW
             {
                 bool status = false;
                 readData = serialPort.ReadExisting();
+                LogOutput.Text += "Read: " + readData;
 
                 if (readData.Contains("OK"))
                     status = true;
@@ -147,8 +150,9 @@ namespace Nixie_SW
                         if(status)
                         {
                             operation = Operation.SendDay;
-                            string cmd1 = "AT$DAY:" + (int)(dt.DayOfWeek + 7) % 7 + "\n";
-                            serialPort.Write(cmd1);
+                            string cmd = "AT$DAY:" + (int)(dt.DayOfWeek + 7) % 7 + "\n";
+                            serialPort.Write(cmd);
+                            LogOutput.Text += "Write: " + cmd;
                         } 
                         else
                         {
@@ -185,6 +189,7 @@ namespace Nixie_SW
             string cmd = "AT$DATE_TIME:" + dt.Day.ToString("00") + "-" + dt.Month.ToString("00") + "-" + dt.Year.ToString("0000") + " " + dt.Hour.ToString("00") + ":" + dt.Minute.ToString("00") + ":" + dt.Second.ToString("00") + "\n";
             operation = Operation.SendDateTime;
             serialPort.Write(cmd);
+            LogOutput.Text += "Write: " + cmd;
         }
 
         private void SendNightModeEnable_Click(object sender, RoutedEventArgs e)
@@ -197,6 +202,7 @@ namespace Nixie_SW
             string cmd = "AT$NIGHT_MODE=1\n";
             operation = Operation.EnableNightMode;
             serialPort.Write(cmd);
+            LogOutput.Text += "Write: " + cmd;
         }
 
         private void SendNightModeDisable_Click(object sender, RoutedEventArgs e)
@@ -209,6 +215,7 @@ namespace Nixie_SW
             string cmd = "AT$NIGHT_MODE=0\n";
             operation = Operation.DisableNightMode;
             serialPort.Write(cmd);
+            LogOutput.Text += "Write: " + cmd;
         }
 
         public void Dispose()

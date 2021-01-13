@@ -7,24 +7,41 @@
         xmlns:local="clr-namespace:Nixie_SW"
         ResizeMode="NoResize"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="Nixie_SW.MainWindow"
+        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         mc:Ignorable="d"
-        Title="Nixie Clock Control" Height="350" Width="500">
+        Title="Nixie Clock Control" Height="370" Width="500">
     <Grid>
-        <materialDesign:Card VerticalAlignment="Top" Margin="20" HorizontalAlignment="Center" materialDesign:ShadowAssist.ShadowDepth="Depth5">
-            <StackPanel Orientation="Horizontal" Margin="16">
-                <materialDesign:PackIcon Kind="ClockOutline" Height="64" Width="64"/>
-                <TextBlock x:Name="TxtClock" Margin="16 0 16 0" TextWrapping="NoWrap" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16">Time</TextBlock>
-            </StackPanel>
-        </materialDesign:Card>
-        <TextBlock VerticalAlignment="Top" Margin="30,165,0,0" HorizontalAlignment="Left" Text="Select serial port:" FontSize="16"/>
-        <ComboBox x:Name="COM" HorizontalAlignment="Left" Margin="170,160,0,0" Width="120" VerticalAlignment="Top"/>
-        <Button x:Name="Connect" Content="Connect" HorizontalAlignment="Left" Margin="370,160,0,0" VerticalAlignment="Top" Click="Connect_Click"/>
-        
-        <TextBlock VerticalAlignment="Top" Margin="30,215,0,0" HorizontalAlignment="Left" Text="Set actual time:" FontSize="16"/>
-        <Button x:Name="SendTime" Content="Send" HorizontalAlignment="Left" Margin="170,210,0,0" VerticalAlignment="Top" Click="SendTime_Click" IsEnabled="False"/>
-        
-        <TextBlock VerticalAlignment="Top" Margin="30,265,0,0" HorizontalAlignment="Left" Text="Set night mode:" FontSize="16"/>
-        <Button x:Name="SendNightModeEnable" Content="Enable" HorizontalAlignment="Left" Margin="170,260,0,0" VerticalAlignment="Top" Click="SendNightModeEnable_Click" IsEnabled="False"/>
-        <Button x:Name="SendNightModeDisable" Content="Disable" HorizontalAlignment="Left" Margin="250,260,0,0" VerticalAlignment="Top" Click="SendNightModeDisable_Click" IsEnabled="False"/>
+        <dragablz:TabablzControl>
+            <dragablz:TabablzControl.InterTabController>
+                <dragablz:InterTabController />
+            </dragablz:TabablzControl.InterTabController>
+            <TabItem Header="Setting">
+                <Canvas>
+                    <materialDesign:Card VerticalAlignment="Top" Margin="20" HorizontalAlignment="Center" materialDesign:ShadowAssist.ShadowDepth="Depth5">
+                        <StackPanel Orientation="Horizontal" Margin="16">
+                            <materialDesign:PackIcon Kind="ClockOutline" Height="64" Width="64"/>
+                            <TextBlock x:Name="TxtClock" Margin="16 0 16 0" TextWrapping="NoWrap" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16">Time</TextBlock>
+                        </StackPanel>
+                    </materialDesign:Card>
+                    <TextBlock VerticalAlignment="Top" Margin="30,165,0,0" HorizontalAlignment="Left" Text="Select serial port:" FontSize="16"/>
+                    <ComboBox x:Name="COM" HorizontalAlignment="Left" Margin="170,160,0,0" Width="120" VerticalAlignment="Top"/>
+                    <Button x:Name="Connect" Content="Connect" HorizontalAlignment="Left" Margin="370,160,0,0" VerticalAlignment="Top" Click="Connect_Click"/>
+
+                    <TextBlock VerticalAlignment="Top" Margin="30,215,0,0" HorizontalAlignment="Left" Text="Set actual time:" FontSize="16"/>
+                    <Button x:Name="SendTime" Content="Send" HorizontalAlignment="Left" Margin="170,210,0,0" VerticalAlignment="Top" Click="SendTime_Click" IsEnabled="False"/>
+
+                    <TextBlock VerticalAlignment="Top" Margin="30,265,0,0" HorizontalAlignment="Left" Text="Set night mode:" FontSize="16"/>
+                    <Button x:Name="SendNightModeEnable" Content="Enable" HorizontalAlignment="Left" Margin="170,260,0,0" VerticalAlignment="Top" Click="SendNightModeEnable_Click" IsEnabled="False"/>
+                    <Button x:Name="SendNightModeDisable" Content="Disable" HorizontalAlignment="Left" Margin="250,260,0,0" VerticalAlignment="Top" Click="SendNightModeDisable_Click" IsEnabled="False"/>
+                </Canvas>
+            </TabItem>
+            <TabItem Header="Log">
+                <Canvas>
+                    <materialDesign:Card VerticalAlignment="Center" Margin="20" HorizontalAlignment="Center" materialDesign:ShadowAssist.ShadowDepth="Depth5">
+                        <TextBox x:Name="LogOutput" Width="440" Height="260" ScrollViewer.VerticalScrollBarVisibility="Auto" BorderThickness="1" Margin="0 0 0 0" TextWrapping="NoWrap"/>
+                    </materialDesign:Card>
+                </Canvas>
+            </TabItem>
+        </dragablz:TabablzControl>
     </Grid>
 </Window>
