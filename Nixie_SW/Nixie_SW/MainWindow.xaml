@@ -15,9 +15,14 @@
             <dragablz:TabablzControl.InterTabController>
                 <dragablz:InterTabController />
             </dragablz:TabablzControl.InterTabController>
-            <TabItem Header="Setting">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Setting"
+                               FontSize="16"
+                               Foreground="White"/>
+                </TabItem.Header>
                 <Canvas>
-                    <materialDesign:Card VerticalAlignment="Top" Margin="20" HorizontalAlignment="Center" materialDesign:ShadowAssist.ShadowDepth="Depth5">
+                    <materialDesign:Card VerticalAlignment="Top" Margin="30 20" HorizontalAlignment="Center" materialDesign:ShadowAssist.ShadowDepth="Depth5">
                         <StackPanel Orientation="Horizontal" Margin="16">
                             <materialDesign:PackIcon Kind="ClockOutline" Height="64" Width="64"/>
                             <TextBlock x:Name="TxtClock" Margin="16 0 16 0" TextWrapping="NoWrap" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16">Time</TextBlock>
@@ -35,10 +40,15 @@
                     <Button x:Name="SendNightModeDisable" Content="Disable" HorizontalAlignment="Left" Margin="250,260,0,0" VerticalAlignment="Top" Click="SendNightModeDisable_Click" IsEnabled="False"/>
                 </Canvas>
             </TabItem>
-            <TabItem Header="Log">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Log"
+                               FontSize="16"
+                               Foreground="White"/>
+                </TabItem.Header>
                 <Canvas>
                     <materialDesign:Card VerticalAlignment="Center" Margin="20" HorizontalAlignment="Center" materialDesign:ShadowAssist.ShadowDepth="Depth5">
-                        <TextBox x:Name="LogOutput" Width="440" Height="260" ScrollViewer.VerticalScrollBarVisibility="Auto" BorderThickness="1" Margin="0 0 0 0" TextWrapping="NoWrap"/>
+                        <TextBlock x:Name="LogOutput" Width="440" Height="260" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0 0 0 0" TextWrapping="NoWrap"/>
                     </materialDesign:Card>
                 </Canvas>
             </TabItem>

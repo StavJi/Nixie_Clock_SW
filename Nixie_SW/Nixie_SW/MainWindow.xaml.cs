@@ -44,6 +44,10 @@ namespace Nixie_SW
             {
                 timeout++;
             }
+            else 
+            {
+                timeout = 0;
+            }
             
             if(timeout >= TIMEOUT_SEC)
             {
@@ -119,7 +123,7 @@ namespace Nixie_SW
                 SendNightModeEnable.IsEnabled = false;
                 SendNightModeDisable.IsEnabled = false;
                 COM.IsEnabled = true;
-                LogOutput.Clear();
+                LogOutput.Text = "";
                 serialPort.Close();
 
             }
@@ -131,19 +135,7 @@ namespace Nixie_SW
             {
                 bool status = false;
                 readData = serialPort.ReadExisting();
-                LogOutput.Text += "Read: " + readData;
 
-                if (readData.Contains("OK"))
-                    status = true;
-                else if (readData.Contains("ERROR"))
-                {
-                    MessageBox.Show("Device responded with error for command!");
-                }
-                else
-                {
-                    MessageBox.Show("Unexpected response for command!");
-                }
-                    
                 switch (operation)
                 {
                     case Operation.SendDateTime:
@@ -172,6 +164,22 @@ namespace Nixie_SW
                     case Operation.DisableNightMode:
                         operation = Operation.NotSet;
                         break;
+                }
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    LogOutput.Text += "Read: " + readData;
+                }));
+
+                if (readData.Contains("OK"))
+                    status = true;
+                else if (readData.Contains("ERROR"))
+                {
+                    MessageBox.Show("Device responded with error for command!");
+                }
+                else
+                {
+                    MessageBox.Show("Unexpected response for command!");
                 }
             }
             catch (Exception errorMSG) {
