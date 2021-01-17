@@ -133,24 +133,44 @@ namespace Nixie_SW
         {
             try
             {
-                bool status = false;
                 readData = serialPort.ReadExisting();
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    // It can return multiple rows in one read
+                    // each row ends with line feed
+                    // so put mark "Read:" before each line device has send
+                    string[] splitString = readData.Split("\n");
+
+                    foreach (string str in splitString)
+                    {
+                        if(str != "")
+                        {
+                            LogOutput.Text += "Read: " + str + "\n";
+                        }
+                    }
+                }));
 
                 switch (operation)
                 {
                     case Operation.SendDateTime:
-                        if(status)
+                        if(readData.Contains("OK"))
                         {
                             operation = Operation.SendDay;
-                            string cmd = "AT$DAY:" + (int)(dt.DayOfWeek + 7) % 7 + "\n";
+                            // Transforms DayOfWeek to Monday = 1
+                            string cmd = "AT$DAY=" + (((int)(dt.DayOfWeek + 6) % 7) + 1) + "\n";
                             serialPort.Write(cmd);
-                            LogOutput.Text += "Write: " + cmd;
+                            
+                            Application.Current.Dispatcher.Invoke(new Action(() =>
+                            {
+                                  LogOutput.Text += "Write: " + cmd;
+                            }));
                         } 
                         else
                         {
                             operation = Operation.NotSet;
                         }
-                        
+
                         break;
 
                     case Operation.SendDay:
@@ -166,18 +186,11 @@ namespace Nixie_SW
                         break;
                 }
 
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    LogOutput.Text += "Read: " + readData;
-                }));
-
-                if (readData.Contains("OK"))
-                    status = true;
-                else if (readData.Contains("ERROR"))
+                if (readData.Contains("ERROR"))
                 {
                     MessageBox.Show("Device responded with error for command!");
                 }
-                else
+                else if(!readData.Contains("OK"))
                 {
                     MessageBox.Show("Unexpected response for command!");
                 }
@@ -194,7 +207,7 @@ namespace Nixie_SW
                 return;
             }
 
-            string cmd = "AT$DATE_TIME:" + dt.Day.ToString("00") + "-" + dt.Month.ToString("00") + "-" + dt.Year.ToString("0000") + " " + dt.Hour.ToString("00") + ":" + dt.Minute.ToString("00") + ":" + dt.Second.ToString("00") + "\n";
+            string cmd = "AT$DATE_TIME=" + dt.Day.ToString("00") + "-" + dt.Month.ToString("00") + "-" + dt.Year.ToString("0000") + " " + dt.Hour.ToString("00") + ":" + dt.Minute.ToString("00") + ":" + dt.Second.ToString("00") + "\n";
             operation = Operation.SendDateTime;
             serialPort.Write(cmd);
             LogOutput.Text += "Write: " + cmd;
