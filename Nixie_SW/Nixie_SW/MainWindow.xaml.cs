@@ -12,7 +12,6 @@ namespace Nixie_SW
     public partial class MainWindow : Window, IDisposable
     {
         readonly DispatcherTimer timer1s = new DispatcherTimer();
-        readonly DispatcherTimer timer5s = new DispatcherTimer();
         readonly SerialPort serialPort = new SerialPort();
         string[] serialPorts;
         DateTime dt;
@@ -133,13 +132,14 @@ namespace Nixie_SW
         {
             try
             {
-                readData = serialPort.ReadExisting();
+                readData = serialPort.ReadLine();
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     // It can return multiple rows in one read
                     // each row ends with line feed
                     // so put mark "Read:" before each line device has send
+                    // TODO delete this if ReadLine() works
                     string[] splitString = readData.Split("\n");
 
                     foreach (string str in splitString)
@@ -150,6 +150,11 @@ namespace Nixie_SW
                         }
                     }
                 }));
+
+                if (!readData.Contains("OK") || !readData.Contains("ERROR"))
+                {
+                    return;
+                }
 
                 switch (operation)
                 {
@@ -189,10 +194,6 @@ namespace Nixie_SW
                 if (readData.Contains("ERROR"))
                 {
                     MessageBox.Show("Device responded with error for command!");
-                }
-                else if(!readData.Contains("OK"))
-                {
-                    MessageBox.Show("Unexpected response for command!");
                 }
             }
             catch (Exception errorMSG) {
