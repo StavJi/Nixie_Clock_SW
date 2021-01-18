@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nixie_SW", "Nixie_SW\Nixie_SW.csproj", "{0C0AD449-1F81-4499-8808-71B537D3BBC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nixie_SW", "Nixie_SW\Nixie_SW.csproj", "{0C0AD449-1F81-4499-8808-71B537D3BBC7}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Nixie_SW_Setup", "Nixie_SW_Setup\Nixie_SW_Setup.vdproj", "{BC32DBF3-A9C3-49E9-BB65-F3E3269A875D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0C0AD449-1F81-4499-8808-71B537D3BBC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C0AD449-1F81-4499-8808-71B537D3BBC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C0AD449-1F81-4499-8808-71B537D3BBC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC32DBF3-A9C3-49E9-BB65-F3E3269A875D}.Debug|Any CPU.ActiveCfg = Release
+		{BC32DBF3-A9C3-49E9-BB65-F3E3269A875D}.Debug|Any CPU.Build.0 = Release
+		{BC32DBF3-A9C3-49E9-BB65-F3E3269A875D}.Release|Any CPU.ActiveCfg = Release
+		{BC32DBF3-A9C3-49E9-BB65-F3E3269A875D}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
