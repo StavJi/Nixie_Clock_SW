@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_900A8A127F924B83BFC85550E53342A5"
+        "MsmKey" = "8:_61F2B949E188429496AC78133093F74E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -43,6 +43,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -59,6 +67,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -167,7 +191,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Nixie_SW"
         "ProductCode" = "8:{2D2174AF-2E96-4905-B9A0-7E6605992108}"
-        "PackageCode" = "8:{5649383F-4300-483E-89E1-30E673EB0756}"
+        "PackageCode" = "8:{A7B5D67A-B87A-474C-B828-DC2A4CC6CBA7}"
         "UpgradeCode" = "8:{3F384D05-C912-4BCE-8682-ED66F1A0707A}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
@@ -287,7 +311,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D0CFBFF6F9B64EFD92F8452298589A19"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_6E3ABBEFC78D4490A713B494D6035018"
             {
             "Name" = "8:Nixie SW"
             "Arguments" = "8:"
@@ -295,13 +319,13 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_900A8A127F924B83BFC85550E53342A5"
+            "Target" = "8:_61F2B949E188429496AC78133093F74E"
             "Folder" = "8:_08AAB6E0472E4110B96024A2DF3C184F"
             "WorkingFolder" = "8:_300061CE088E48BF9C06FB19C20884B4"
             "Icon" = "8:_E0327E0AC1AD48DFA55688A688C90AFD"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D1323030E0D944D1B7773A660B8E8E09"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C277254637BB4C6D8CAF3D64BA0E8E6B"
             {
             "Name" = "8:Nixie SW"
             "Arguments" = "8:"
@@ -309,7 +333,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_900A8A127F924B83BFC85550E53342A5"
+            "Target" = "8:_61F2B949E188429496AC78133093F74E"
             "Folder" = "8:_017B46586C42485D873940C00E450B90"
             "WorkingFolder" = "8:_300061CE088E48BF9C06FB19C20884B4"
             "Icon" = "8:_E0327E0AC1AD48DFA55688A688C90AFD"
@@ -714,9 +738,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_900A8A127F924B83BFC85550E53342A5"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_61F2B949E188429496AC78133093F74E"
             {
-            "SourcePath" = "8:..\\Nixie_SW\\obj\\Debug\\netcoreapp3.1\\Nixie_SW.dll"
+            "SourcePath" = "8:..\\Nixie_SW\\obj\\Debug\\netcoreapp3.1\\Nixie_SW.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_300061CE088E48BF9C06FB19C20884B4"
@@ -735,7 +759,7 @@
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
             "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
+            "OutputGroupCanonicalName" = "8:PublishItems"
             "OutputProjectGuid" = "8:{0C0AD449-1F81-4499-8808-71B537D3BBC7}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
