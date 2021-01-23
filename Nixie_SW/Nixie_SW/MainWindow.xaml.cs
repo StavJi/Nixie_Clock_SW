@@ -18,7 +18,7 @@ namespace Nixie_SW
         string readData;
         Operation operation;
         int timeout;
-        const int TIMEOUT_SEC = 2;
+        const int TIMEOUT_SEC = 5;
 
         public MainWindow()
         {
@@ -132,7 +132,12 @@ namespace Nixie_SW
         {
             try
             {
-                readData = serialPort.ReadLine();
+                readData += serialPort.ReadExisting();
+
+                if (!readData.Contains("OK") && !readData.Contains("ERROR"))
+                {
+                    return;
+                }
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
@@ -150,11 +155,6 @@ namespace Nixie_SW
                         }
                     }
                 }));
-
-                if (!readData.Contains("OK") || !readData.Contains("ERROR"))
-                {
-                    return;
-                }
 
                 switch (operation)
                 {
@@ -199,6 +199,8 @@ namespace Nixie_SW
             catch (Exception errorMSG) {
                 MessageBox.Show(errorMSG.Message);
             }
+
+            readData = "";
         }
 
         private void SendTime_Click(object sender, RoutedEventArgs e)
